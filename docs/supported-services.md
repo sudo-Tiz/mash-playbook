@@ -56,6 +56,7 @@
 | [Prometheus SSH Exporter](https://github.com/treydock/ssh_exporter) | SSH probes | [Link](services/prometheus-ssh-exporter.md) |
 | [Prometheus Node Exporter](https://github.com/prometheus/node_exporter) | Exporter for machine metrics | [Link](services/prometheus-node-exporter.md) |
 | [Prometheus Postgres Exporter](https://github.com/prometheus-community/postgres_exporter) | A PostgreSQL metric exporter for Prometheus | [Link](services/prometheus-postgres-exporter.md) |
+| [Promtail](https://grafana.com/docs/loki/latest/send-data/promtail/) | A log aggregation system designed to store and query logs from all your applications and infrastructure | [Link](services/promtail.md) |
 | [Radicale](https://radicale.org/) | A Free and Open-Source CalDAV and CardDAV Server (solution for hosting contacts and calendars) | [Link](services/radicale.md) |
 | [Redmine](https://redmine.org/) | A flexible project management web application. | [Link](services/redmine.md) |
 | [Redis](https://redis.io/) | An in-memory data store used by millions of developers as a database, cache, streaming engine, and message broker. | [Link](services/redis.md) |
