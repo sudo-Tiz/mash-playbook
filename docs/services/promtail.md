@@ -1,4 +1,4 @@
-# Prometheus Ansible role
+# Promtail Ansible role
 
 [Promtail](https://grafana.com/oss/promtail/) is a log aggregation system designed to store and query logs from all your applications and infrastructure. This role helps you to set up promtail:
 
