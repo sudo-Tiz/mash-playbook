@@ -53,6 +53,7 @@ promtail_varlog_scraper_enabled: false
 ```
 #### Scraping other logs
 ##### Exemple with ssh: 
+Following exemple show how to use promtail to scrape sshd logs
 
 Use ``promtail_container_additional_mounts_custom`` to add volumes to monitor:
 ```yaml
@@ -75,7 +76,7 @@ promtail_config_scrape_additional: >-
 
 
 ##### Exemple with syslog:
-Following exemple show how to use rsyslog and promtail to scrape syslog using port 1514   
+Following exemple show how to use rsyslog and promtail to scrape syslog logs
 
 Prerequesites :  
 *Edit your rsyslog configuration in order to send logs to promtail.*  
@@ -87,7 +88,7 @@ Prerequesites :
 You could need to expose container to acces it from host:
 ```yaml
 promtail_container_additionnal_bind_ports:
-  - ["<optionnal_host_ip>:<host_port>", "<promtail_port>"]
+  - ["<optionnal_host_ip>:<host_port>", "<container_port>"]
 ```
 
 Use ``promtail_config_scrape_additional`` to define your scraping configuration:
@@ -95,7 +96,7 @@ Use ``promtail_config_scrape_additional`` to define your scraping configuration:
 promtail_config_scrape_additional: >-
   - job_name: syslog
     syslog:
-      listen_address: 0.0.0.0:1514
+      listen_address: 0.0.0.0:<container_port>
       labels:
         job: syslog
     relabel_configs:
