@@ -1,6 +1,6 @@
-# Promtail Ansible Role
-**WIP role, use with caution**  
-[promtail](https://grafana.com/oss/promtail/) is a log aggregation system designed to store and query logs from all your applications and infrastructure. This role helps you to set up promtail:
+# Prometheus Ansible role
+
+[Promtail](https://grafana.com/oss/promtail/) is a log aggregation system designed to store and query logs from all your applications and infrastructure. This role helps you to set up promtail:
 
 - with everything run in [Docker](https://www.docker.com/) containers
 - powered by [the official promtail container image](https://hub.docker.com/r/grafana/promtail/)
@@ -45,25 +45,25 @@ promtail_hostname: promtail.example.org
 ```
 ### Scraping logs
 #### Default scraping behavior
-By default, promtail will scrape systemd-journald annd ssh logs you can enable/disable this behavior by setting :
+By default, promtail will scrape systemd-journald and ssh logs you can enable/disable this behavior by setting :
 
-```
+```yaml
 promtail_journald_scraper_enabled: false
-promtail_ssh_scraper_enabled: false
+promtail_varlog_scraper_enabled: false
 ```
 #### Scraping other logs
-*Exemple with ssh:*  
+##### Exemple with ssh: 
 
 Use ``promtail_container_additional_mounts_custom`` to add volumes to monitor:
-```
+```yaml
 promtail_container_additional_mounts_custom:
- - "type=bind,source=/var/log/secure,target=/data/ssh,readonly"
+ - "type=bind,source=</path/to/ssh/logs>,target=/data/ssh,readonly"
 ```
 
 
 Use ``promtail_config_scrape_additional`` to define your scraping configuration:
-```
-promtail_config_scrape_additional: |
+```yaml
+promtail_config_scrape_additional: >-
   - job_name: ssh
     static_configs:
     - localhost
@@ -72,7 +72,49 @@ promtail_config_scrape_additional: |
         job: ssh
 ```
 
-## Usage
 
-After [installing](../installing.md), ...
 
+##### Exemple with syslog:
+Following exemple show how to use rsyslog and promtail to scrape syslog using port 1514   
+
+Prerequesites :  
+*Edit your rsyslog configuration in order to send logs to promtail.*  
+*This could be done by creating a /etc/rsyslog.d/00-promtail-relay.conf with following content:*
+```
+*.* action(type="omfwd" protocol="tcp" target="<promtail_host>" port="<promtail_port>" Template="RSYSLOG_SyslogProtocol23Format" TCP_Framing="octet-counted" KeepAlive="on")
+```
+
+You could need to expose container to acces it from host:
+```yaml
+promtail_container_additionnal_bind_ports:
+  - ["<optionnal_host_ip>:<host_port>", "<promtail_port>"]
+```
+
+Use ``promtail_config_scrape_additional`` to define your scraping configuration:
+```yaml
+promtail_config_scrape_additional: >-
+  - job_name: syslog
+    syslog:
+      listen_address: 0.0.0.0:1514
+      labels:
+        job: syslog
+    relabel_configs:
+      - source_labels: [__syslog_message_hostname]
+        target_label: host
+      - source_labels: [__syslog_message_hostname]
+        target_label: hostname
+      - source_labels: [__syslog_message_severity]
+        target_label: level
+      - source_labels: [__syslog_message_app_name]
+        target_label: application
+      - source_labels: [__syslog_message_facility]
+        target_label: facility
+      - source_labels: [__syslog_connection_hostname]
+        target_label: connection_hostname
+```
+
+Check [defaults/main.yml](defaults/main.yml l) for the full list of supported options.
+
+## Recommended other services
+
+- [Grafana](grafana.md) - a web-based tool for visualizing your Promtail logs
